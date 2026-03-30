@@ -2,32 +2,35 @@
 using SchoolSystem.Core.Models;
 
 
+// === ASSOCIATION: Student ↔ Course (many-to-many) ===
 
-var school = new School("Cairo International School", "Cairo, Egypt");
-
-
-// Teachers created OUTSIDE — not by the department
-var drHany = new Teacher("Dr. Hany", new DateTime(1980, 3, 10), "hany@school.com", "TCH-001", 15000m);
-var drMona = new Teacher("Dr. Mona", new DateTime(1985, 7, 22), "mona@school.com", "TCH-002", 14000m);
-
-
-
-Console.WriteLine("\n=== INHERITANCE + POLYMORPHISM ===\n");
 
 var sara = new Student("Sara Ahmed", new DateTime(2002, 5, 15), "sara@school.com", "STU-001");
 var ahmed = new Student("Ahmed Ali", new DateTime(2001, 8, 20), "ahmed@school.com", "STU-002");
 
-// Inheritance: Student and Teacher are both Person
-Console.WriteLine($"  Sara is Person? {sara is Person}");      // True
-Console.WriteLine($"  Dr. Hany is Person? {drHany is Person}"); // True
+Console.WriteLine("\n=== ASSOCIATION ===\n");
 
-// Polymorphism: same method call → different result
-Console.WriteLine($"\n  Sara.GetRole() = {sara.GetRole()}");       // Student
-Console.WriteLine($"  Dr. Hany.GetRole() = {drHany.GetRole()}");   // Teacher
+var cs101 = new Course("CS101", "Intro to Programming", maxCapacity: 2);
+var math201 = new Course("MATH201", "Linear Algebra");
 
-// the real power: loop through base type, each behaves differently
-Console.WriteLine("\n  All people:");
-List<Person> people = [sara, ahmed, drHany, drMona];
+// Sara enrolls in 2 courses
+sara.EnrollInCourse(cs101);
+sara.EnrollInCourse(math201);
 
-foreach (var person in people)
-    Console.WriteLine($"    {person}");  // ToString() uses GetRole() internally
+// Ahmed enrolls in 1 course
+ahmed.EnrollInCourse(cs101);
+
+// both sides know about each other
+Console.WriteLine($"  {cs101}");    // 2/2
+Console.WriteLine($"  {math201}");  // 1/30
+
+Console.WriteLine($"\n  Sara's courses: {sara.EnrolledCourses.Count}");    // 2
+Console.WriteLine($"  Ahmed's courses: {ahmed.EnrolledCourses.Count}");    // 1
+Console.WriteLine($"  CS101 students: {cs101.EnrolledStudents.Count}");    // 2
+
+// drop course — both sides updated
+sara.DropCourse(cs101);
+
+Console.WriteLine($"\n  After Sara drops CS101:");
+Console.WriteLine($"  Sara's courses: {sara.EnrolledCourses.Count}");    // 1
+Console.WriteLine($"  CS101 students: {cs101.EnrolledStudents.Count}");  // 1
